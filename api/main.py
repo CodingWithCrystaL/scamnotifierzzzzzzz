@@ -312,3 +312,23 @@ async def submit_report(
 # /api prefix mount is kept for local uvicorn dev server.
 app.include_router(main_router)
 app.include_router(main_router, prefix="/api")
+
+# Serve Frontend explicitly via FastAPI to bypass Vercel routing issues
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+public_dir = os.path.join(BASE_DIR, "public")
+
+@app.get("/")
+async def serve_home():
+    return FileResponse(os.path.join(public_dir, "index.html"))
+
+@app.get("/auth/callback")
+async def serve_callback_bare():
+    return FileResponse(os.path.join(public_dir, "auth", "callback.html"))
+
+app.mount("/css", StaticFiles(directory=os.path.join(public_dir, "css")), name="css")
+app.mount("/js", StaticFiles(directory=os.path.join(public_dir, "js")), name="js")
+app.mount("/pages", StaticFiles(directory=os.path.join(public_dir, "pages")), name="pages")
+app.mount("/auth", StaticFiles(directory=os.path.join(public_dir, "auth")), name="auth")
