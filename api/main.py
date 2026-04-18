@@ -11,7 +11,6 @@ import hmac
 import hashlib
 from datetime import datetime, timezone
 from typing import Optional, List
-
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Depends, Request, Header, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -20,8 +19,6 @@ from dotenv import load_dotenv
 from supabase import create_client, Client
 
 load_dotenv()
-
-from stats import stats_router
 
 # ── Config ────────────────────────────────────────────────────
 SUPABASE_URL        = os.getenv("SUPABASE_URL", "")
@@ -36,9 +33,6 @@ DISCORD_EPOCH       = 1420070400000
 
 # ── App ────────────────────────────────────────────────────────
 app = FastAPI(title="Scam Notifier API", version="1.0.0")
-
-app.include_router(stats_router, prefix="/api")
-app.include_router(stats_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -119,6 +113,18 @@ main_router = APIRouter()
 async def root():
     return {"service": "Scam Notifier API", "status": "online"}
 
+@main_router.get("/stats")
+async def get_stats():
+    try:
+        db = get_db()
+        scammers = db.table("reports").select("id", count="exact").eq("status","scammer").execute()
+        trusted  = db.table("reports").select("id", count="exact").eq("status","trusted").execute()
+        return {
+            "scammers": scammers.count or 0,
+            "trusted":  trusted.count  or 0,
+        }
+    except Exception:
+        return {"scammers": 0, "trusted": 0}
 
 @main_router.get("/check")
 async def check(target: str, type: str = "server"):
