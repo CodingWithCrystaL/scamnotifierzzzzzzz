@@ -7,6 +7,10 @@
     {
       "source": "/auth/callback",
       "destination": "/public/auth/callback.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
     }
   ],
   "headers": [
