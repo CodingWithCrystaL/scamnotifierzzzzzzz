@@ -54,7 +54,6 @@
     }
     animateRing();
 
-    // Expand ring on interactive elements
     const interactiveSelectors = 'a, button, input, .check-tab, .step-card, .feature-card, .mono, [data-tilt], [data-magnetic]';
 
     document.addEventListener('mouseover', (e) => {
@@ -85,11 +84,8 @@
   function initSakuraPetals() {
     const petalCount = 15;
     const petalSVGs = [
-      // Small petal
       `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="6" cy="6" rx="5" ry="3" fill="rgba(245,183,208,0.5)" transform="rotate(30 6 6)"/></svg>`,
-      // Medium petal
       `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="8" cy="8" rx="6" ry="3.5" fill="rgba(232,145,185,0.4)" transform="rotate(-20 8 8)"/></svg>`,
-      // Tiny dot petal
       `<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="4" r="3" fill="rgba(250,218,221,0.4)"/></svg>`,
     ];
 
@@ -104,7 +100,7 @@
     }
   }
 
-  // ─── PARTICLES BACKGROUND (Cherry Blossom) ─────────
+  // ─── PARTICLES BACKGROUND ──────────────────────────
   function initParticles() {
     const canvas = document.getElementById('particles-canvas');
     if (!canvas) return;
@@ -139,10 +135,18 @@
         this.speedX = (Math.random() - 0.5) * 0.3;
         this.speedY = (Math.random() - 0.5) * 0.3;
         this.opacity = Math.random() * 0.4 + 0.1;
-        // Pink-tinted particles
         this.type = Math.random();
       }
 
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        // Mouse repulsion
+        const dx = this.x - mousePos.x;
+        const dy = this.y - mousePos.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
           const force = (120 - dist) / 120;
           this.x -= dx * force * 0.02;
           this.y -= dy * force * 0.02;
@@ -159,20 +163,16 @@
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         if (this.type > 0.6) {
-          // Pink particles
           ctx.fillStyle = `rgba(232, 145, 185, ${this.opacity * 0.6})`;
         } else if (this.type > 0.3) {
-          // Soft pink particles
           ctx.fillStyle = `rgba(245, 183, 208, ${this.opacity * 0.5})`;
         } else {
-          // White-ish particles
           ctx.fillStyle = `rgba(240, 234, 240, ${this.opacity * 0.3})`;
         }
         ctx.fill();
       }
     }
 
-    // Create particles
     const count = Math.min(Math.floor((canvas.width * canvas.height) / 15000), 80);
     for (let i = 0; i < count; i++) {
       particles.push(new Particle());
@@ -200,19 +200,16 @@
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       particles.forEach(p => {
         p.update();
         p.draw();
       });
-
       connectParticles();
       animationId = requestAnimationFrame(animate);
     }
 
     animate();
 
-    // Pause when not visible
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         cancelAnimationFrame(animationId);
@@ -263,9 +260,7 @@
           observer.unobserve(entry.target);
         }
       });
-    }, {
-      threshold: 0.2
-    });
+    }, { threshold: 0.1 });
 
     elements.forEach(el => {
       el.classList.add('text-hidden');
@@ -273,34 +268,21 @@
     });
   }
 
-  // ─── TILT EFFECT ON CARDS ─────────────────────────
+  // ─── TILT EFFECT ──────────────────────────────────
   function initTiltEffect() {
-    const cards = document.querySelectorAll('[data-tilt]');
-    if (!cards.length) return;
+    const elements = document.querySelectorAll('[data-tilt]');
+    if (!elements.length) return;
 
-    cards.forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * -6;
-        const rotateY = ((x - centerX) / centerX) * 6;
-
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        card.style.transition = 'transform 0.1s ease';
-
-        // Dynamic glare
-        const glareX = (x / rect.width) * 100;
-        const glareY = (y / rect.height) * 100;
-        card.style.setProperty('--glare-x', glareX + '%');
-        card.style.setProperty('--glare-y', glareY + '%');
+    elements.forEach(el => {
+      el.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        el.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.02)`;
       });
 
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)';
       });
     });
   }
@@ -313,36 +295,30 @@
     elements.forEach(el => {
       el.addEventListener('mousemove', (e) => {
         const rect = el.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-
-        el.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
-        el.style.transition = 'transform 0.2s ease';
+        const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
+        const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
+        el.style.transform = `translate(${x}px, ${y}px)`;
       });
 
       el.addEventListener('mouseleave', () => {
         el.style.transform = 'translate(0, 0)';
-        el.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
       });
     });
   }
 
-  // ─── PARALLAX ON HERO ELEMENTS ────────────────────
+  // ─── PARALLAX EFFECT ──────────────────────────────
   function initParallax() {
     const heroGlow = document.querySelector('.hero-glow');
     const heroGrid = document.querySelector('.hero-grid');
     const orbs = document.querySelectorAll('.hero-orb');
     const scrollIndicator = document.getElementById('scroll-indicator');
 
-    if (!heroGlow && !heroGrid && !orbs.length) return;
-
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
-      const rate = scrollY * 0.3;
+      const rate = scrollY * 0.4;
 
       if (heroGlow) {
-        heroGlow.style.transform = `translateX(-50%) translateY(${rate * 0.4}px)`;
-        heroGlow.style.opacity = Math.max(0, 1 - scrollY / 600);
+        heroGlow.style.transform = `translateY(${rate * 0.3}px)`;
       }
 
       if (heroGrid) {
@@ -354,7 +330,6 @@
         orb.style.transform = `translateY(${scrollY * speed}px)`;
       });
 
-      // Fade scroll indicator
       if (scrollIndicator) {
         scrollIndicator.style.opacity = Math.max(0, 1 - scrollY / 200);
         scrollIndicator.style.transform = `translateX(-50%) translateY(${scrollY * 0.5}px)`;
@@ -386,7 +361,6 @@
     const badge = document.querySelector('.hero-badge');
     if (!badge) return;
 
-    // Shimmer effect
     setInterval(() => {
       badge.classList.add('badge-shimmer');
       setTimeout(() => badge.classList.remove('badge-shimmer'), 1000);
@@ -452,11 +426,13 @@
 
     cards.forEach(card => {
       card.addEventListener('mouseenter', function() {
-        this.querySelector('.feature-icon').style.transform = 'scale(1.2) rotate(5deg)';
+        const icon = this.querySelector('.feature-icon');
+        if (icon) icon.style.transform = 'scale(1.2) rotate(5deg)';
       });
 
       card.addEventListener('mouseleave', function() {
-        this.querySelector('.feature-icon').style.transform = 'scale(1) rotate(0deg)';
+        const icon = this.querySelector('.feature-icon');
+        if (icon) icon.style.transform = 'scale(1) rotate(0deg)';
       });
     });
   }
@@ -468,10 +444,7 @@
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
     });
@@ -495,7 +468,6 @@
     let pauseTimeout;
 
     function type() {
-      // Don't animate if user is focused
       if (document.activeElement === input) {
         pauseTimeout = setTimeout(type, 1000);
         return;
@@ -506,7 +478,6 @@
       if (!deleting) {
         input.placeholder = current.slice(0, charIdx + 1);
         charIdx++;
-
         if (charIdx >= current.length) {
           deleting = true;
           pauseTimeout = setTimeout(type, 2500);
@@ -516,7 +487,6 @@
       } else {
         input.placeholder = current.slice(0, charIdx);
         charIdx--;
-
         if (charIdx <= 0) {
           deleting = false;
           textIdx = (textIdx + 1) % texts.length;
@@ -529,15 +499,9 @@
 
     setTimeout(type, 2000);
 
-    // Restore default placeholder on focus
-    input.addEventListener('focus', () => {
-      clearTimeout(pauseTimeout);
-    });
-
+    input.addEventListener('focus', () => { clearTimeout(pauseTimeout); });
     input.addEventListener('blur', () => {
-      if (!input.value) {
-        setTimeout(type, 1000);
-      }
+      if (!input.value) setTimeout(type, 1000);
     });
   }
 
@@ -593,7 +557,6 @@
     initGlowFollow();
     initCounterAnimation();
 
-    // Loading overlay fade
     document.body.classList.add('loaded');
   });
 
