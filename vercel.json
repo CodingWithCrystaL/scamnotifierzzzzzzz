@@ -6,15 +6,11 @@
     },
     {
       "source": "/auth/callback",
-      "destination": "/public/auth/callback.html"
+      "destination": "/auth/callback.html"
     },
     {
       "source": "/",
-      "destination": "/public/index.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/public/$1"
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -36,4 +32,3 @@
       ]
     }
   ]
-}
