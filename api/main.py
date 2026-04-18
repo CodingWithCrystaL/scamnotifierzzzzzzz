@@ -26,7 +26,7 @@ DISCORD_EPOCH         = 1420070400000
 # Production redirect URI — env var overrides for local dev
 REDIRECT_URI = os.getenv(
     "VITE_REDIRECT_URI",
-    "https://scam-notifier.vercel.app/auth/callback"
+    "https://scamnotifier.vercel.app/auth/callback"
 )
 
 # ── App ────────────────────────────────────────────────────────
@@ -35,7 +35,7 @@ app = FastAPI(title="Scam Notifier API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://scam-notifier.vercel.app",
+        "https://scamnotifier.vercel.app",
         "http://localhost:5500",
         "http://localhost:8000",
         "http://127.0.0.1:5500",
