@@ -1,20 +1,30 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.py" },
-    { "source": "/auth/callback", "destination": "/public/auth/callback.html" }
-  ],
-  "functions": {
-    "api/index.py": {
-      "maxDuration": 30
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/auth/callback",
+      "destination": "/public/auth/callback.html"
     }
-  },
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "https://scam-notifier.vercel.app" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization" }
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://scam-notifier.vercel.app"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,POST,OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type,Authorization"
+        }
       ]
     }
   ]
