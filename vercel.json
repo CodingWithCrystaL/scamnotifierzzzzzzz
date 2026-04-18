@@ -1,7 +1,19 @@
 {
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/main.py" },
+    { "source": "/auth/callback", "destination": "/website/auth/callback.html" },
     { "source": "/(css|js|pages|auth)/(.*)", "destination": "/website/$1/$2" },
-    { "source": "/", "destination": "/website/index.html" }
+    { "source": "/", "destination": "/website/index.html" },
+    { "source": "/(.*)", "destination": "/website/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
   ]
 }
