@@ -11,7 +11,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://scam-notifier.vercel.app"
+          "value": "https://scamnotifier.vercel.app"
         },
         {
           "key": "Access-Control-Allow-Methods",
