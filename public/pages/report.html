@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Submit Report - Scam Notifier</title>
+  <meta name="description" content="Report a scammer on Discord. Help protect the community by submitting evidence." />
+  <meta name="theme-color" content="#E891B9" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="icon" href="https://raw.githubusercontent.com/CodingWithCrystaL/zenportfolops/refs/heads/main/file_0000000059c0720b8f5c9ed18b7b5c53.webp" />
+</head>
+<body>
+
+  <!-- ── SCROLL PROGRESS BAR ────────────────────────── -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- ── CUSTOM CURSOR ──────────────────────────────── -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+  <!-- ── FLOATING PARTICLES CANVAS ──────────────────── -->
+  <canvas id="particles-canvas"></canvas>
+
+  <nav class="nav" id="navbar">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/">
+        <img class="nav-logo" src="https://raw.githubusercontent.com/CodingWithCrystaL/zenportfolops/refs/heads/main/file_0000000059c0720b8f5c9ed18b7b5c53.webp" alt="Scam Notifier" />
+        <span>Scam<span class="pink">Notifier</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/#check-section">Check</a>
+        <a href="report.html" style="color:var(--text)">Report</a>
+        <a href="https://discord.gg/scamnotifier" target="_blank">Discord</a>
+      </div>
+      <div class="nav-auth" id="nav-auth">
+        <button class="btn-discord" onclick="loginDiscord()">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M15.25 1.17A14.9 14.9 0 0 0 11.52 0c-.18.32-.38.75-.52 1.09a13.8 13.8 0 0 0-4 0C6.86.75 6.65.32 6.47 0A14.87 14.87 0 0 0 2.74 1.17 15.75 15.75 0 0 0 0 12.17a14.92 14.92 0 0 0 4.54 2.3c.37-.5.7-1.03.98-1.59a9.7 9.7 0 0 1-1.54-.74l.37-.29a10.65 10.65 0 0 0 9.3 0l.37.29a9.6 9.6 0 0 1-1.54.74c.28.56.61 1.09.97 1.59A14.87 14.87 0 0 0 18 12.17 15.72 15.72 0 0 0 15.25 1.17ZM6 10c-.83 0-1.5-.77-1.5-1.71S5.16 6.57 6 6.57s1.51.78 1.5 1.72S6.84 10 6 10Zm6 0c-.83 0-1.5-.77-1.5-1.71s.66-1.72 1.5-1.72 1.51.78 1.5 1.72S12.84 10 12 10Z" fill="currentColor"/></svg>
+          Connect Discord
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Report Hero ──────────────────────────────── -->
+  <section class="report-hero">
+    <div class="hero-glow"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="report-hero-content" data-scroll-reveal>
+      <div class="hero-badge" data-scroll-reveal data-delay="100">
+        <span class="badge-dot"></span>
+        Community Reports
+      </div>
+      <h1 class="page-title" data-scroll-reveal data-delay="200">Submit a <span class="pink">Report</span></h1>
+      <p class="page-sub" data-scroll-reveal data-delay="300">Help protect the Discord community by reporting scammers with evidence.</p>
+    </div>
+  </section>
+
+  <div class="page-wrap" data-scroll-reveal data-delay="400">
+    <div id="page-body">
+      <!-- Rendered by JS based on auth state -->
+    </div>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────── -->
+  <footer class="footer" data-scroll-reveal>
+    <div class="container">
+      <div class="footer-brand">
+        <img class="footer-logo" src="https://raw.githubusercontent.com/CodingWithCrystaL/zenportfolops/refs/heads/main/file_0000000059c0720b8f5c9ed18b7b5c53.webp" alt="Scam Notifier" />
+        Scam<span class="pink">Notifier</span>
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="https://discord.gg/scamnotifier" target="_blank">Discord</a>
+      </div>
+      <div class="footer-copy">© 2025 Scam Notifier</div>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/report.js"></script>
+  <script src="../js/animations.js"></script>
+</body>
+</html>
