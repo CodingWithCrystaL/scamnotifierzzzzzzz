@@ -9,6 +9,10 @@
       "destination": "/public/auth/callback.html"
     },
     {
+      "source": "/",
+      "destination": "/public/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/public/$1"
     }
