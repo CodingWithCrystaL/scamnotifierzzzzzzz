@@ -109,10 +109,6 @@ class CheckResponse(BaseModel):
 
 main_router = APIRouter()
 
-@main_router.get("/")
-async def root():
-    return {"service": "Scam Notifier API", "status": "online"}
-
 @main_router.get("/stats")
 async def get_stats():
     try:
