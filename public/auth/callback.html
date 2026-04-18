@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Logging in... - Scam Notifier</title>
+  <meta name="theme-color" content="#E891B9" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+  <link rel="icon" href="https://raw.githubusercontent.com/CodingWithCrystaL/zenportfolops/refs/heads/main/file_0000000059c0720b8f5c9ed18b7b5c53.webp" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink: #E891B9;
+      --pink-hot: #D4619C;
+      --pink-soft: #F5B7D0;
+      --bg: #08060D;
+      --bg-2: #0D0B14;
+      --text: #F0EAF0;
+      --text-2: #9B8FA0;
+      --text-3: #5A4E62;
+      --border: rgba(232,145,185,0.06);
+      --green: #7ECFA0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    /* Animated background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,145,185,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,145,185,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridShift 20s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gridShift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(60px, 60px); }
+    }
+
+    /* Glow effect */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(212,97,156,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    }
+
+    .box {
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      padding: 48px 32px;
+      background: rgba(13,11,20,0.8);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(24px);
+      animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .callback-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      object-fit: cover;
+      margin: 0 auto 16px;
+      display: block;
+      box-shadow: 0 0 30px rgba(232,145,185,0.15);
+    }
+
+    .title {
+      font-family: 'Syne', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .msg {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 28px;
+      transition: all 0.3s ease;
+    }
+
+    /* Modern spinner */
+    .spinner-wrap {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 2px solid rgba(232,145,185,0.08);
+      border-top-color: var(--pink);
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+
+    .spinner-inner {
+      position: absolute;
+      inset: 8px;
+      border: 2px solid transparent;
+      border-bottom-color: rgba(232,145,185,0.3);
+      border-radius: 50%;
+      animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .err {
+      color: var(--pink);
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 16px;
+      padding: 10px 14px;
+      background: rgba(232,145,185,0.06);
+      border: 1px solid rgba(232,145,185,0.12);
+      border-radius: 8px;
+      animation: shakeIn 0.4s ease;
+    }
+
+    @keyframes shakeIn {
+      0% { transform: translateX(-8px); opacity: 0; }
+      25% { transform: translateX(6px); }
+      50% { transform: translateX(-4px); }
+      75% { transform: translateX(2px); }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Success state */
+    .success .title { color: var(--green); }
+    .success .spinner-wrap { display: none; }
+
+    .success-check {
+      display: none;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: rgba(126,207,160,0.12);
+      border: 2px solid rgba(126,207,160,0.3);
+      position: relative;
+      animation: checkPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .success .success-check { display: flex; align-items: center; justify-content: center; }
+
+    .success-check::after {
+      content: '✓';
+      font-size: 22px;
+      color: var(--green);
+    }
+
+    @keyframes checkPop {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+
+    /* Floating particles */
+    .particle {
+      position: fixed;
+      width: 3px;
+      height: 3px;
+      background: rgba(232,145,185,0.3);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="box" id="box">
+    <img class="callback-logo" src="https://raw.githubusercontent.com/CodingWithCrystaL/zenportfolops/refs/heads/main/file_0000000059c0720b8f5c9ed18b7b5c53.webp" alt="Scam Notifier" />
+    <div class="title">Scam<span style="color:#E891B9">Notifier</span></div>
+    <div class="success-check" id="success-check"></div>
+    <div class="msg" id="msg">Completing login...</div>
+    <div class="spinner-wrap" id="spinner-wrap">
+      <div class="spinner" id="spinner"></div>
+      <div class="spinner-inner"></div>
+    </div>
+    <div class="err" id="err" style="display:none"></div>
+  </div>
+
+  <!-- Floating particles -->
+  <script>
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.top = Math.random() * 100 + '%';
+      p.style.animationDuration = (3 + Math.random() * 4) + 's';
+      p.style.animationDelay = Math.random() * 3 + 's';
+      p.style.opacity = 0.1 + Math.random() * 0.3;
+      p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+      // Mix pink & white particles
+      p.style.background = Math.random() > 0.5
+        ? `rgba(232,145,185,${0.2 + Math.random() * 0.3})`
+        : `rgba(245,183,208,${0.15 + Math.random() * 0.2})`;
+      p.animate([
+        { transform: `translate(0, 0) scale(1)`, opacity: p.style.opacity },
+        { transform: `translate(${-30 + Math.random()*60}px, ${-60 - Math.random()*40}px) scale(0)`, opacity: 0 }
+      ], {
+        duration: 3000 + Math.random() * 4000,
+        iterations: Infinity,
+        delay: Math.random() * 3000
+      });
+      document.body.appendChild(p);
+    }
+  </script>
+
+  <script src="../js/config.js"></script>
+  <script>
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const code   = params.get("code");
+      const error  = params.get("error");
+
+      if (error || !code) {
+        document.getElementById("spinner-wrap").style.display = "none";
+        const reason = error ? `Discord gave error: ${error}` : `No Auth Code provided in URL: ${window.location.href}`;
+        document.getElementById("msg").textContent = `Login cancelled. (${reason})`;
+        setTimeout(() => { window.location.href = "/"; }, 4000);
+        return;
+      }
+
+      try {
+        const fd = new FormData();
+        fd.append("code", code);
+
+        const resp = await fetch(`${API_BASE}/auth/callback`, { method: "POST", body: fd });
+        if (!resp.ok) throw new Error("Token exchange failed");
+        const user = await resp.json();
+
+        sessionStorage.setItem("sn_user", JSON.stringify(user));
+
+        // Show success state
+        const box = document.getElementById("box");
+        box.classList.add("success");
+        document.getElementById("msg").textContent = `Welcome, ${user.username}!`;
+        document.getElementById("spinner-wrap").style.display = "none";
+
+        // Redirect back to report page or home
+        const returnTo = sessionStorage.getItem("sn_return") || "/";
+        sessionStorage.removeItem("sn_return");
+        setTimeout(() => { window.location.href = returnTo; }, 800);
+      } catch (e) {
+        document.getElementById("spinner-wrap").style.display = "none";
+        document.getElementById("msg").textContent       = "Login failed.";
+        document.getElementById("err").style.display     = "block";
+        document.getElementById("err").textContent       = e.message;
+        setTimeout(() => { window.location.href = "/"; }, 2500);
+      }
+    })();
+  </script>
+</body>
+</html>
