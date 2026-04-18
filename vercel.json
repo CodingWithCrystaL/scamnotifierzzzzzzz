@@ -1,12 +1,22 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "api/main.py", "use": "@vercel/python" },
-    { "src": "public/**/*", "use": "@vercel/static" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.py" },
+    { "source": "/auth/callback", "destination": "/public/auth/callback.html" }
   ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "api/main.py" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "public/$1" }
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.9",
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://scam-notifier.vercel.app" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization" }
+      ]
+    }
   ]
 }
