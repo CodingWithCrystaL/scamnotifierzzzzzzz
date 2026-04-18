@@ -7,4 +7,4 @@ const DISCORD_CLIENT_ID = "1491956010938535978";
 
 const REDIRECT_URI = _isLocal
   ? "http://localhost:5500/auth/callback"
-  : "https://scam-notifier.vercel.app/auth/callback";
+  : "https://scamnotifier.vercel.app/auth/callback";
