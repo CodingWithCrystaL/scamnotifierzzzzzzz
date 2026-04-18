@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/main.py" },
+    { "source": "/(css|js|pages|auth)/(.*)", "destination": "/website/$1/$2" },
+    { "source": "/", "destination": "/website/index.html" }
+  ]
+}
