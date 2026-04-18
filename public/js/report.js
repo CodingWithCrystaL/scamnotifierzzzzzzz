@@ -28,9 +28,8 @@ function renderPage() {
     return;
   }
 
-  // Pre-fill from query params if navigated from check result
-  const sp     = new URLSearchParams(window.location.search);
-  const preId  = sp.get("target") || "";
+  const sp      = new URLSearchParams(window.location.search);
+  const preId   = sp.get("target") || "";
   const preType = sp.get("type") || "server";
 
   body.innerHTML = `
@@ -46,8 +45,12 @@ function renderPage() {
       <div class="form-group">
         <label>What are you reporting?</label>
         <div class="check-tabs" style="max-width:100%">
-          <button class="check-tab ${preType==='server'?'active':''}" data-type="server" onclick="switchRepType('server',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-top: -2px; margin-right: 4px;"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg> Server</button>
-          <button class="check-tab ${preType==='user'?'active':''}" data-type="user"   onclick="switchRepType('user',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-top: -2px; margin-right: 4px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> User</button>
+          <button class="check-tab ${preType==='server'?'active':''}" data-type="server" onclick="switchRepType('server',this)">
+            <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg> Server
+          </button>
+          <button class="check-tab ${preType==='user'?'active':''}" data-type="user" onclick="switchRepType('user',this)">
+            <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> User
+          </button>
         </div>
       </div>
 
@@ -63,10 +66,12 @@ function renderPage() {
 
       <div class="form-group">
         <label>Proof Images <span style="color:var(--pink)">*</span> (min 1, max ${MAX_PROOFS})</label>
-        <div class="proof-drop" id="proof-drop" onclick="document.getElementById('proof-input').click()" 
+        <div class="proof-drop" id="proof-drop" onclick="document.getElementById('proof-input').click()"
              ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
           <input type="file" id="proof-input" accept="image/*" multiple onchange="handleFileSelect(this.files)" />
-          <div class="proof-drop-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2v0Z"/></svg></div>
+          <div class="proof-drop-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2v0Z"/></svg>
+          </div>
           <div class="proof-drop-label">Click or drag images here</div>
           <div class="proof-drop-hint">PNG, JPG, GIF, WEBP - max 8 files</div>
         </div>
@@ -142,10 +147,9 @@ async function submitReport() {
   const target = document.getElementById("rep-target")?.value.trim();
   const desc   = document.getElementById("rep-desc")?.value.trim();
   const btn    = document.getElementById("submit-btn");
-  const alert  = document.getElementById("form-alert");
 
   if (!target) { showAlert("error", "Target ID or invite link is required."); return; }
-  if (!desc)   { showAlert("error", "Description is required.");             return; }
+  if (!desc)   { showAlert("error", "Description is required.");              return; }
   if (selectedFiles.length === 0) { showAlert("error", "At least one proof image is required."); return; }
 
   btn.disabled    = true;
@@ -166,16 +170,16 @@ async function submitReport() {
 
     if (!resp.ok) throw new Error(data.detail || "Submission failed");
 
-    showAlert("success", `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-top: -2px; margin-right: 4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Report submitted successfully! Our admins will review it shortly. Submission ID: ${data.submission_id}`);
+    showAlert("success", `✅ Report submitted! Our admins will review it shortly. ID: ${escHtml(String(data.submission_id))}`);
     document.getElementById("rep-target").value = "";
     document.getElementById("rep-desc").value   = "";
     selectedFiles = [];
     renderPreviews();
   } catch (err) {
-    showAlert("error", `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-top: -2px; margin-right: 4px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> ${err.message}`);
+    showAlert("error", `⚠️ ${escHtml(err.message)}`);
   } finally {
-    btn.disabled    = false;
-    btn.innerHTML   = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-top: -2px; margin-right: 6px;"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Submit Report`;
+    btn.disabled  = false;
+    btn.innerHTML = `📨 Submit Report`;
   }
 }
 
@@ -183,7 +187,12 @@ function showAlert(type, msg) {
   const el = document.getElementById("form-alert");
   if (!el) return;
   if (!type || !msg) { el.innerHTML = ""; return; }
-  el.innerHTML = `<div class="alert ${type}">${escHtml(msg)}</div>`;
+  // Use textContent-safe approach: create element manually
+  const div = document.createElement("div");
+  div.className = `alert ${type}`;
+  div.innerHTML = msg; // msg already has escHtml applied to user data
+  el.innerHTML = "";
+  el.appendChild(div);
   el.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
