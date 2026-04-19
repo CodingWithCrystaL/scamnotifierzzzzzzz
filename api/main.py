@@ -70,20 +70,47 @@ def snowflake_to_datetime(snowflake_id: str) -> Optional[str]:
 
 
 async def fetch_discord_metadata(target_id: str, target_type: str, invite_code: str = None) -> dict:
-    meta = {"name": None, "avatar_url": None}
+    meta = {"name": None, "avatar_url": None, "banner_url": None, "bio": None}
+    bot_token = os.getenv("DISCORD_BOT_TOKEN", "").strip()
+    headers = {"Authorization": f"Bot {bot_token}"} if bot_token else {}
+
     try:
         async with aiohttp.ClientSession() as session:
-            if target_type == "server" and invite_code:
-                url = f"https://discord.com/api/v10/invites/{invite_code}?with_counts=true"
-                async with session.get(url) as r:
+            if target_type == "user" and target_id.isdigit():
+                async with session.get(f"https://discord.com/api/v10/users/{target_id}", headers=headers) as r:
                     if r.status == 200:
-                        data  = await r.json()
-                        guild = data.get("guild", {})
-                        meta["name"] = guild.get("name")
-                        icon = guild.get("icon")
-                        if icon:
+                        data = await r.json()
+                        meta["name"] = data.get("global_name") or data.get("username")
+                        if data.get("avatar"):
+                            meta["avatar_url"] = f"https://cdn.discordapp.com/avatars/{target_id}/{data['avatar']}.png?size=256"
+                        if data.get("banner"):
+                            meta["banner_url"] = f"https://cdn.discordapp.com/banners/{target_id}/{data['banner']}.png?size=512"
+            
+            elif target_type == "server":
+                if invite_code:
+                    url = f"https://discord.com/api/v10/invites/{invite_code}?with_counts=true"
+                    async with session.get(url) as r:
+                        if r.status == 200:
+                            data  = await r.json()
+                            guild = data.get("guild", {})
+                            meta["name"] = guild.get("name")
+                            meta["bio"]  = guild.get("description")
                             gid = guild.get("id", "")
-                            meta["avatar_url"] = f"https://cdn.discordapp.com/icons/{gid}/{icon}.png"
+                            if guild.get("icon"):
+                                meta["avatar_url"] = f"https://cdn.discordapp.com/icons/{gid}/{guild['icon']}.png?size=256"
+                            if guild.get("banner"):
+                                meta["banner_url"] = f"https://cdn.discordapp.com/banners/{gid}/{guild['banner']}.png?size=512"
+                elif target_id.isdigit():
+                    url = f"https://discord.com/api/v10/guilds/{target_id}/preview"
+                    async with session.get(url, headers=headers) as r:
+                        if r.status == 200:
+                            guild = await r.json()
+                            meta["name"] = guild.get("name")
+                            meta["bio"]  = guild.get("description")
+                            if guild.get("icon"):
+                                meta["avatar_url"] = f"https://cdn.discordapp.com/icons/{target_id}/{guild['icon']}.png?size=256"
+                            if guild.get("banner"):
+                                meta["banner_url"] = f"https://cdn.discordapp.com/banners/{target_id}/{guild['banner']}.png?size=512"
     except Exception:
         pass
     return meta
@@ -105,8 +132,10 @@ class CheckResponse(BaseModel):
     target_type:   str
     name:          Optional[str]
     avatar_url:    Optional[str]
+    banner_url:    Optional[str] = None
     creation_date: Optional[str]
     description:   Optional[str]
+    bio:           Optional[str] = None
     proof_count:   int
     proofs:        List[dict]
 
@@ -181,12 +210,16 @@ async def check(target: str, type: str = "server"):
     description   = db_record.get("description") if db_record else None
     name          = db_record.get("name")     if db_record else None
     avatar_url    = db_record.get("avatar_url") if db_record else None
+    banner_url    = None
+    bio           = None
 
     # Layer 2 — Discord metadata
-    if not name and invite_code:
+    if status == "not_reported" or not name:
         meta       = await fetch_discord_metadata(real_id, type, invite_code)
-        name       = meta.get("name")
-        avatar_url = meta.get("avatar_url")
+        name       = name or meta.get("name")
+        avatar_url = avatar_url or meta.get("avatar_url")
+        banner_url = meta.get("banner_url")
+        bio        = meta.get("bio")
 
     # Layer 3 — Snowflake fallback
     creation_date = snowflake_to_datetime(real_id)
@@ -195,8 +228,9 @@ async def check(target: str, type: str = "server"):
 
     return CheckResponse(
         status=status, target_id=real_id, target_type=type,
-        name=name, avatar_url=avatar_url, creation_date=creation_date,
-        description=description, proof_count=len(proofs), proofs=proofs,
+        name=name, avatar_url=avatar_url, banner_url=banner_url,
+        creation_date=creation_date, description=description, bio=bio,
+        proof_count=len(proofs), proofs=proofs,
     )
 
 
