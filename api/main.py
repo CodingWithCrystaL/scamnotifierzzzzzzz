@@ -250,6 +250,7 @@ async def check(target: str, type: str = "server"):
     display_name  = None
     owner_id      = None
     owner_name    = None
+    member_count  = None
 
     if status == "not_reported" or not name:
         meta       = await fetch_discord_metadata(real_id, type, invite_code)
