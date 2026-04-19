@@ -5,7 +5,7 @@
     { "src": "js/**", "use": "@vercel/static" },
     { "src": "pages/**", "use": "@vercel/static" },
     { "src": "auth/**", "use": "@vercel/static" },
-    { "src": "api/**/*.py", "use": "@vercel/python" }
+    { "src": "api/index.py", "use": "@vercel/python" }
   ],
   "cleanUrls": true,
   "rewrites": [
