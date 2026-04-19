@@ -270,14 +270,13 @@
 
         const resp = await fetch(`${API_BASE}/auth/callback`, { method: "POST", body: fd });
         if (!resp.ok) {
-          let errDetail = "Unknown Error";
+          const rawText = await resp.text();
+          let errDetail = rawText;
           try {
-             const data = await resp.json();
-             errDetail = data.detail || JSON.stringify(data);
-          } catch(e) {
-             errDetail = await resp.text();
-          }
-          throw new Error(`Token exchange failed: ${errDetail}`);
+            const parsed = JSON.parse(rawText);
+            errDetail = parsed.detail || JSON.stringify(parsed);
+          } catch(e) {}
+          throw new Error(`Server Error: ${errDetail}`);
         }
         const user = await resp.json();
 
