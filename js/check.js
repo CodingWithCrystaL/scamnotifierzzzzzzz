@@ -73,8 +73,7 @@ function renderResult(data) {
   const {
     status, target_id, target_type, name,
     avatar_url, banner_url, creation_date,
-    description, proofs,
-    member_count, bio, accent_color,
+    description, proofs, bio
   } = data;
 
   const ICONS = {
@@ -132,46 +131,6 @@ function renderResult(data) {
         <label>Created</label>
         <value>${escHtml(creation_date)}</value>
       </div>`;
-  }
-
-  if (member_count) {
-    metaItems += `
-      <div class="meta-item">
-        <label>Members</label>
-        <value>${Number(member_count).toLocaleString()}</value>
-      </div>`;
-  }
-
-  if (!isServer) {
-    if (username) {
-      metaItems += `
-        <div class="meta-item">
-          <label>Username</label>
-          <value>@${escHtml(username)}</value>
-        </div>`;
-    }
-    if (display_name) {
-      metaItems += `
-        <div class="meta-item">
-          <label>Display Name</label>
-          <value>${escHtml(display_name)}</value>
-        </div>`;
-    }
-  } else {
-    if (owner_name) {
-      metaItems += `
-        <div class="meta-item">
-          <label>Owner</label>
-          <value>${escHtml(owner_name)}</value>
-        </div>`;
-    }
-    if (owner_id) {
-      metaItems += `
-        <div class="meta-item">
-          <label>Owner ID</label>
-          <value>${escHtml(owner_id)}</value>
-        </div>`;
-    }
   }
 
   // Bio/description
