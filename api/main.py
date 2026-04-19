@@ -70,17 +70,7 @@ def snowflake_to_datetime(snowflake_id: str) -> Optional[str]:
 
 
 async def fetch_discord_metadata(target_id: str, target_type: str, invite_code: str = None) -> dict:
-    meta = {
-        "name": None, 
-        "username": None, 
-        "display_name": None, 
-        "avatar_url": None, 
-        "banner_url": None, 
-        "bio": None,
-        "owner_id": None,
-        "owner_name": None,
-        "member_count": None
-    }
+    meta = {"name": None, "avatar_url": None, "banner_url": None, "bio": None}
     bot_token = os.getenv("DISCORD_BOT_TOKEN", "").strip()
     headers = {"Authorization": f"Bot {bot_token}"} if bot_token else {}
 
@@ -91,8 +81,6 @@ async def fetch_discord_metadata(target_id: str, target_type: str, invite_code: 
                     if r.status == 200:
                         data = await r.json()
                         meta["name"] = data.get("global_name") or data.get("username")
-                        meta["username"] = data.get("username")
-                        meta["display_name"] = data.get("global_name")
                         if data.get("avatar"):
                             meta["avatar_url"] = f"https://cdn.discordapp.com/avatars/{target_id}/{data['avatar']}.png?size=256"
                         if data.get("banner"):
@@ -107,7 +95,6 @@ async def fetch_discord_metadata(target_id: str, target_type: str, invite_code: 
                             guild = data.get("guild", {})
                             meta["name"] = guild.get("name")
                             meta["bio"]  = guild.get("description")
-                            meta["member_count"] = data.get("approximate_member_count")
                             gid = guild.get("id", "")
                             if guild.get("icon"):
                                 meta["avatar_url"] = f"https://cdn.discordapp.com/icons/{gid}/{guild['icon']}.png?size=256"
@@ -120,24 +107,10 @@ async def fetch_discord_metadata(target_id: str, target_type: str, invite_code: 
                             guild = await r.json()
                             meta["name"] = guild.get("name")
                             meta["bio"]  = guild.get("description")
-                            meta["member_count"] = guild.get("approximate_member_count")
                             if guild.get("icon"):
                                 meta["avatar_url"] = f"https://cdn.discordapp.com/icons/{target_id}/{guild['icon']}.png?size=256"
                             if guild.get("banner"):
                                 meta["banner_url"] = f"https://cdn.discordapp.com/banners/{target_id}/{guild['banner']}.png?size=512"
-
-                # Attempt to get owner if it is a server and target_id is valid
-                if target_id.isdigit():
-                    url = f"https://discord.com/api/v10/guilds/{target_id}"
-                    async with session.get(url, headers=headers) as r:
-                        if r.status == 200:
-                            guild_data = await r.json()
-                            meta["owner_id"] = guild_data.get("owner_id")
-                            if meta["owner_id"]:
-                                async with session.get(f"https://discord.com/api/v10/users/{meta['owner_id']}", headers=headers) as ur:
-                                    if ur.status == 200:
-                                        user_data = await ur.json()
-                                        meta["owner_name"] = user_data.get("username")
     except Exception:
         pass
     return meta
@@ -158,16 +131,11 @@ class CheckResponse(BaseModel):
     target_id:     str
     target_type:   str
     name:          Optional[str]
-    username:      Optional[str] = None
-    display_name:  Optional[str] = None
     avatar_url:    Optional[str]
     banner_url:    Optional[str] = None
     creation_date: Optional[str]
     description:   Optional[str]
     bio:           Optional[str] = None
-    owner_id:      Optional[str] = None
-    owner_name:    Optional[str] = None
-    member_count:  Optional[int] = None
     proof_count:   int
     proofs:        List[dict]
 
@@ -246,23 +214,12 @@ async def check(target: str, type: str = "server"):
     bio           = None
 
     # Layer 2 — Discord metadata
-    username      = None
-    display_name  = None
-    owner_id      = None
-    owner_name    = None
-    member_count  = None
-
     if status == "not_reported" or not name:
         meta       = await fetch_discord_metadata(real_id, type, invite_code)
         name       = name or meta.get("name")
         avatar_url = avatar_url or meta.get("avatar_url")
         banner_url = meta.get("banner_url")
         bio        = meta.get("bio")
-        username   = meta.get("username")
-        display_name = meta.get("display_name")
-        owner_id      = meta.get("owner_id")
-        owner_name    = meta.get("owner_name")
-        member_count  = meta.get("member_count")
 
     # Layer 3 — Snowflake fallback
     creation_date = snowflake_to_datetime(real_id)
@@ -272,9 +229,6 @@ async def check(target: str, type: str = "server"):
     return CheckResponse(
         status=status, target_id=real_id, target_type=type,
         name=name, avatar_url=avatar_url, banner_url=banner_url,
-        username=username, display_name=display_name,
-        owner_id=owner_id, owner_name=owner_name,
-        member_count=member_count,
         creation_date=creation_date, description=description, bio=bio,
         proof_count=len(proofs), proofs=proofs,
     )
