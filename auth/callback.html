@@ -269,7 +269,16 @@
         fd.append("code", code);
 
         const resp = await fetch(`${API_BASE}/auth/callback`, { method: "POST", body: fd });
-        if (!resp.ok) throw new Error("Token exchange failed");
+        if (!resp.ok) {
+          let errDetail = "Unknown Error";
+          try {
+             const data = await resp.json();
+             errDetail = data.detail || JSON.stringify(data);
+          } catch(e) {
+             errDetail = await resp.text();
+          }
+          throw new Error(`Token exchange failed: ${errDetail}`);
+        }
         const user = await resp.json();
 
         sessionStorage.setItem("sn_user", JSON.stringify(user));
