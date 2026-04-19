@@ -142,6 +142,38 @@ function renderResult(data) {
       </div>`;
   }
 
+  if (!isServer) {
+    if (username) {
+      metaItems += `
+        <div class="meta-item">
+          <label>Username</label>
+          <value>@${escHtml(username)}</value>
+        </div>`;
+    }
+    if (display_name) {
+      metaItems += `
+        <div class="meta-item">
+          <label>Display Name</label>
+          <value>${escHtml(display_name)}</value>
+        </div>`;
+    }
+  } else {
+    if (owner_name) {
+      metaItems += `
+        <div class="meta-item">
+          <label>Owner</label>
+          <value>${escHtml(owner_name)}</value>
+        </div>`;
+    }
+    if (owner_id) {
+      metaItems += `
+        <div class="meta-item">
+          <label>Owner ID</label>
+          <value>${escHtml(owner_id)}</value>
+        </div>`;
+    }
+  }
+
   // Bio/description
   let bioHtml = "";
   if (bio) {
