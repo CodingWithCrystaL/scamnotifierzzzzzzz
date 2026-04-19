@@ -1,4 +1,12 @@
 {
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "css/**", "use": "@vercel/static" },
+    { "src": "js/**", "use": "@vercel/static" },
+    { "src": "pages/**", "use": "@vercel/static" },
+    { "src": "auth/**", "use": "@vercel/static" },
+    { "src": "api/**/*.py", "use": "@vercel/python" }
+  ],
   "cleanUrls": true,
   "rewrites": [
     {
