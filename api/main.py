@@ -44,6 +44,8 @@ app.add_middleware(
 
 # ── Supabase ───────────────────────────────────────────────────
 def get_db() -> Client:
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        raise HTTPException(status_code=500, detail="Database environment variables (SUPABASE_URL, SUPABASE_SERVICE_KEY) are missing in Vercel.")
     return create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
 # ── Helpers ────────────────────────────────────────────────────
