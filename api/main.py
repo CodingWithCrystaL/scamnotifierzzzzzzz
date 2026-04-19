@@ -23,11 +23,8 @@ DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET", "")
 ADMIN_WEBHOOK_URL     = os.getenv("ADMIN_WEBHOOK_URL", "")
 DISCORD_EPOCH         = 1420070400000
 
-# Production redirect URI — env var overrides for local dev
-REDIRECT_URI = os.getenv(
-    "VITE_REDIRECT_URI",
-    "https://scamnotifier.vercel.app/auth/callback"
-)
+# Production redirect URI (hardcoded to prevent stale env-var overrides)
+REDIRECT_URI = "https://scamnotifier.vercel.app/auth/callback"
 
 # ── App ────────────────────────────────────────────────────────
 app = FastAPI(title="Scam Notifier API", version="1.0.0")
