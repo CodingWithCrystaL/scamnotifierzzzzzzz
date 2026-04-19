@@ -25,18 +25,16 @@
   // ─── CUSTOM CURSOR ─────────────────────────────────
   function initCustomCursor() {
     const dot = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
-    if (!dot || !ring) return;
+    if (!dot) return;
 
     // Hide on mobile/touch devices
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
       dot.style.display = 'none';
-      ring.style.display = 'none';
       return;
     }
 
-    let mouseX = 0, mouseY = 0;
-    let ringX = 0, ringY = 0;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
 
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
@@ -45,37 +43,54 @@
       dot.style.top = mouseY + 'px';
     });
 
-    function animateRing() {
-      ringX += (mouseX - ringX) * 0.15;
-      ringY += (mouseY - ringY) * 0.15;
-      ring.style.left = ringX + 'px';
-      ring.style.top = ringY + 'px';
-      requestAnimationFrame(animateRing);
+    // Trail logic
+    const trails = [];
+    const NUM_TRAILS = 8;
+    for (let i = 0; i < NUM_TRAILS; i++) {
+        const t = document.createElement('div');
+        t.className = 'cursor-trail';
+        document.body.appendChild(t);
+        trails.push({ el: t, x: mouseX, y: mouseY });
     }
-    animateRing();
+
+    function animateTrails() {
+        let px = mouseX;
+        let py = mouseY;
+        trails.forEach((t, i) => {
+            t.x += (px - t.x) * 0.45;
+            t.y += (py - t.y) * 0.45;
+            t.el.style.left = t.x + 'px';
+            t.el.style.top = t.y + 'px';
+            
+            const scale = 1 - (i / NUM_TRAILS);
+            t.el.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            t.el.style.opacity = scale;
+            
+            px = t.x;
+            py = t.y;
+        });
+        requestAnimationFrame(animateTrails);
+    }
+    animateTrails();
 
     const interactiveSelectors = 'a, button, input, .check-tab, .step-card, .feature-card, .mono, [data-tilt], [data-magnetic]';
 
     document.addEventListener('mouseover', (e) => {
       if (e.target.closest(interactiveSelectors)) {
-        ring.classList.add('cursor-hover');
         dot.classList.add('cursor-hover');
       }
     });
 
     document.addEventListener('mouseout', (e) => {
       if (e.target.closest(interactiveSelectors)) {
-        ring.classList.remove('cursor-hover');
         dot.classList.remove('cursor-hover');
       }
     });
 
     document.addEventListener('mousedown', () => {
-      ring.classList.add('cursor-click');
       dot.classList.add('cursor-click');
     });
     document.addEventListener('mouseup', () => {
-      ring.classList.remove('cursor-click');
       dot.classList.remove('cursor-click');
     });
   }
